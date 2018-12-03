@@ -96,9 +96,9 @@ if __name__ == "__main__":
         ]
 
         # write synthetic reads
-        fastq_handle.write(''.join(["@%s:%d:%s\n%s\n+\n%s\n"%(transcript.chromosome, \
-            position,transcript.strand,read,qual) \
-            for position,read in zip(positions,reads)]))
+        fastq_handle.write(''.join(["@{}:{}:{}\n{}\n+\n{}\n".format(transcript.chromosome, \
+            int(position),transcript.strand, str(read),qual) \
+            for position,read in zip(positions,reads)]).encode())
 
         # get reverse strand reads
         transcript.mask = transcript.mask[::-1]
@@ -113,9 +113,9 @@ if __name__ == "__main__":
         ]
 
         # write synthetic reads
-        fastq_handle.write(''.join(["@%s:%d:%s\n%s\n+\n%s\n"%(transcript.chromosome, \
-            position,transcript.strand,read,qual) \
-            for position,read in zip(positions,reads)]))
+        fastq_handle.write(''.join(["@{}:{}:{}\n{}\n+\n{}\n".format(transcript.chromosome, \
+            int(position),transcript.strand, str(read),qual) \
+            for position,read in zip(positions,reads)]).encode())
 
     seq_handle.close()
     fastq_handle.close()

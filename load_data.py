@@ -4,6 +4,11 @@ import utils
 import pdb
 from functools import reduce
 
+import sys
+PY3 = True
+if sys.version_info[0] < 3:
+    PY3 = False
+
 MIN_MAP_QUAL = 10
 
 
@@ -289,10 +294,17 @@ class Transcript():
             self.exons = [(e[0] - self.start, e[1] - self.start)
                           for e in self.exons]
             self.mask = np.zeros((self.stop - self.start, ), dtype='bool')
-            ig = [
-                self.mask.__setslice__(start, stop, True)
-                for (start, stop) in self.exons
-            ]
+            if PY3:
+                ig = [
+                    self.mask.__setitem__(slice(start, stop), True)
+                    for (start, stop) in self.exons
+                ]
+            else:
+                ig = [
+                    self.mask.__setslice__(start, stop, True)
+                    for (start, stop) in self.exons
+                ]
+
             if self.strand == '-':
                 self.mask = self.mask[::-1]
 
