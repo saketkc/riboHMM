@@ -6,17 +6,19 @@ import os, pdb
 
 MIN_MAP_QUAL = 10
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(description=" convert bam data format to tabix data format, "
-                                     " for ribosome profiling and RNA-seq data ")
+    parser = argparse.ArgumentParser(
+        description=" convert bam data format to tabix data format, "
+        " for ribosome profiling and RNA-seq data ")
 
-    parser.add_argument("bam_file",
-                        action="store",
-                        help="path to bam input file")
+    parser.add_argument(
+        "bam_file", action="store", help="path to bam input file")
 
-    parser.add_argument("mappability_file_prefix",
-                        action="store",
-                        help="prefix of mappability file")
+    parser.add_argument(
+        "mappability_file_prefix",
+        action="store",
+        help="prefix of mappability file")
 
     options = parser.parse_args()
 
@@ -25,8 +27,8 @@ def parse_args():
 
     return options
 
-def which(program):
 
+def which(program):
     def is_exe(fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
@@ -43,6 +45,7 @@ def which(program):
 
     return None
 
+
 def compute_mappability(options):
 
     # file names and handles
@@ -50,7 +53,7 @@ def compute_mappability(options):
     map_handle = open(map_file, 'w')
     sam_handle = pysam.Samfile(options.bam_file, "rb")
 
-    for cname,clen in zip(sam_handle.references,sam_handle.lengths):
+    for cname, clen in zip(sam_handle.references, sam_handle.lengths):
 
         # fetch reads in chromosome
         sam_iter = sam_handle.fetch(reference=cname)
@@ -70,32 +73,34 @@ def compute_mappability(options):
             if not read.is_reverse:
                 mapped_site = int(read.positions[0])
                 true_chrom, true_site = read.query_name.split(':')[:2]
-                if read.reference_name==true_chrom and mapped_site==int(true_site):
+                if read.reference_name == true_chrom and mapped_site == int(
+                        true_site):
                     mappable_positions.append(mapped_site)
 
-        if len(mappable_positions)>0:
+        if len(mappable_positions) > 0:
 
             # get boundaries of mappable portions of the genome
             mappable_positions = np.sort(mappable_positions)
 
-            boundaries = mappable_positions[:-1]-mappable_positions[1:]
-            indices = np.where(boundaries<-1)[0]
-            ends = (mappable_positions[indices]+1).tolist()
+            boundaries = mappable_positions[:-1] - mappable_positions[1:]
+            indices = np.where(boundaries < -1)[0]
+            ends = (mappable_positions[indices] + 1).tolist()
             try:
-                ends.append(mappable_positions[-1]+1)
+                ends.append(mappable_positions[-1] + 1)
             except IndexError:
                 pdb.set_trace()
 
-            boundaries = mappable_positions[1:]-mappable_positions[:-1]
-            indices = np.where(boundaries>1)[0]+1
+            boundaries = mappable_positions[1:] - mappable_positions[:-1]
+            indices = np.where(boundaries > 1)[0] + 1
             starts = mappable_positions[indices].tolist()
-            starts.insert(0,mappable_positions[0])
+            starts.insert(0, mappable_positions[0])
 
             # write to file
-            for start,end in zip(starts,ends):
-                map_handle.write('\t'.join([cname, '%d'%start, '%d'%end])+'\n')
+            for start, end in zip(starts, ends):
+                map_handle.write('\t'.join(
+                    [cname, '%d' % start, '%d' % end]) + '\n')
 
-        print("completed %s"%cname)
+        print("completed %s" % cname)
 
     sam_handle.close()
     map_handle.close()
@@ -110,9 +115,11 @@ def compute_mappability(options):
         stdout=subprocess.PIPE, shell=True)
     stdout = pipe.communicate()[0]
 
-    print("completed computing mappability from BAM file %s"%options.bam_file)
+    print(
+        "completed computing mappability from BAM file %s" % options.bam_file)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
 
     options = parse_args()
 
