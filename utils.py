@@ -1,5 +1,6 @@
 import numpy as np
 import re
+from functools import reduce
 
 READ_LENGTHS = [28, 29, 30, 31]
 STARTCODONS = ['AUG','CUG','GUG','UUG','AAG','ACG','AGG','AUA','AUC','AUU']
@@ -15,7 +16,7 @@ binarize = dict([(0,np.array([False,False,False])),
                  (7,np.array([True,True,True]))
                 ])
 
-debinarize = dict([(val.tostring(),key) for key,val in binarize.iteritems()])
+debinarize = dict([(val.tostring(),key) for key,val in binarize.items()])
 
 # some essential functions
 insum = lambda x,axes: np.apply_over_axes(np.sum,x,axes)
@@ -54,7 +55,7 @@ CODON_AA_MAP = dict([('GCU','A'), ('GCC','A'), ('GCA','A'), ('GCG','A'), \
                  ('UAU','Y'), ('UAC','Y'), \
                  ('UAA','X'), ('UGA','X'), ('UAG','X')])
 
-translate = lambda seq: ''.join([CODON_AA_MAP[seq[s:s+3]] if CODON_AA_MAP.has_key(seq[s:s+3]) else 'X' for s in xrange(0,len(seq),3)])
+translate = lambda seq: ''.join([CODON_AA_MAP[seq[s:s+3]] if seq[s:s+3] in CODON_AA_MAP else 'X' for s in range(0,len(seq),3)])
 
 
 def make_cigar(mask):
@@ -65,13 +66,13 @@ def make_cigar(mask):
     else:
         switches = list(np.where(np.logical_xor(mask[:-1],mask[1:]))[0]+1)
         switches.insert(0,0)
-        cigar = ['%d%s'%(switches[i+1]-switches[i],char[i%2]) for i in xrange(len(switches)-1)]
+        cigar = ['%d%s'%(switches[i+1]-switches[i],char[i%2]) for i in range(len(switches)-1)]
         cigar.append('%d%s'%(mask.size-switches[-1],char[(i+1)%2]))
     return ''.join(cigar)
 
 def make_mask(cigar):
 
-    intervals = map(int,re.split('[MN]',cigar)[:-1])
+    intervals = list(map(int,re.split('[MN]',cigar)[:-1]))
     mask = np.zeros((np.sum(intervals),), dtype='bool')
     for i,inter in enumerate(intervals[::2]):
         mask[np.sum(intervals[:2*i]):np.sum(intervals[:2*i])+inter] = True
@@ -87,7 +88,7 @@ def get_exons(mask):
         switches.insert(0,0)
         exons[0] = '%d'%(len(switches[::2]))
         exons[2] = ','.join(map(str,switches[::2]))+','
-        exons[1] = ','.join(map(str,[switches[i+1]-switches[i] for i in xrange(0,len(switches)-1,2)]))+','
+        exons[1] = ','.join(map(str,[switches[i+1]-switches[i] for i in range(0,len(switches)-1,2)]))+','
         exons[1] = exons[1]+'%d,'%(mask.size-switches[-1])
     return exons
 

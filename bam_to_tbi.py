@@ -80,11 +80,11 @@ def convert_rnaseq(options):
                 counts[site] = 1
 
         # write counts to output file
-        indices = np.sort(counts.keys())
+        indices = np.sort(list(counts.keys()))
         for i in indices:
             count_handle.write('\t'.join([cname,'%d'%i,'%d'%(i+1),'%d'%counts[i]])+'\n')
 
-        print "completed %s"%cname
+        print("completed %s"%cname)
 
     sam_handle.close()
     count_handle.close()
@@ -98,7 +98,7 @@ def convert_rnaseq(options):
     pipe = subprocess.Popen("%s -f -b 2 -e 3 -0 %s.gz"%(options.tabix, count_file), \
         stdout=subprocess.PIPE, shell=True)
     stdout = pipe.communicate()[0]
-    print "Compressed file with RNA-seq counts is %s"%(count_file+'.gz')
+    print("Compressed file with RNA-seq counts is %s"%(count_file+'.gz'))
 
 
 def convert_riboseq(options):
@@ -147,15 +147,15 @@ def convert_riboseq(options):
 
         # write counts to output files
         for r in utils.READ_LENGTHS:
-            indices = np.sort(fwd_counts[r].keys())
+            indices = np.sort(list(fwd_counts[r].keys()))
             for i in indices:
                 fwd_handle[r].write('\t'.join([cname, '%d'%i, '%d'%(i+1), '%d'%fwd_counts[r][i]])+'\n')
 
-            indices = np.sort(rev_counts[r].keys())
+            indices = np.sort(list(rev_counts[r].keys()))
             for i in indices:
                 rev_handle[r].write('\t'.join([cname, '%d'%i, '%d'%(i+1), '%d'%rev_counts[r][i]])+'\n')
 
-        print "completed %s"%cname
+        print("completed %s"%cname)
 
     sam_handle.close()
     for r in utils.READ_LENGTHS:
@@ -179,8 +179,8 @@ def convert_riboseq(options):
         pipe = subprocess.Popen("%s -f -b 2 -e 3 -0 %s.%d.gz"%(options.tabix, rev_count_file, r), \
             stdout=subprocess.PIPE, shell=True)
         stdout = pipe.communicate()[0]
-        print "Compressed file with ribosome footprint counts on forward strand is %s"%(fwd_count_file+'.%d.gz'%r)
-        print "Compressed file with ribosome footprint counts on reverse strand is %s"%(rev_count_file+'.%d.gz'%r)
+        print("Compressed file with ribosome footprint counts on forward strand is %s"%(fwd_count_file+'.%d.gz'%r))
+        print("Compressed file with ribosome footprint counts on reverse strand is %s"%(rev_count_file+'.%d.gz'%r))
 
 if __name__=="__main__":
 

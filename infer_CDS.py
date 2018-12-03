@@ -1,5 +1,5 @@
 import argparse
-import cPickle
+import pickle
 import warnings
 import pdb
 
@@ -99,13 +99,13 @@ def infer(options):
 
     # load the model
     handle = open(options.model_file, 'r')
-    transition = cPickle.load(handle)
-    emission = cPickle.load(handle)
+    transition = pickle.load(handle)
+    emission = pickle.load(handle)
     handle.close()
 
     # load transcripts
     transcript_models = load_data.load_gtf(options.gtf_file)
-    transcript_names = transcript_models.keys()
+    transcript_names = list(transcript_models.keys())
     N = len(transcript_names)
     n = int(np.ceil(N/1000))
     
@@ -123,7 +123,7 @@ def infer(options):
                "protein_seq", "num_exons", "exon_sizes", "exon_starts"]
     handle.write(" ".join(map(str,towrite))+'\n')
 
-    for n in xrange(N):
+    for n in range(N):
 
         tnames = transcript_names[n*1000:(n+1)*1000]
         alltranscripts = [transcript_models[name] for name in tnames]

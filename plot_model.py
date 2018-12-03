@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plot
-import cPickle
+import pickle
 import ribohmm
 import utils
 import pdb
@@ -14,8 +14,8 @@ offsets = np.array([-1,-0.65,-0.3,0.05,0.4,0.75])
 xvals = np.array([1,4,7,10,13,16,19,22,25])
 for b in bs:
     handle = open("test/hg19_test_%d.pkl"%b,'r')
-    transitions.append(cPickle.load(handle))
-    emissions.append(cPickle.load(handle))
+    transitions.append(pickle.load(handle))
+    emissions.append(pickle.load(handle))
     handle.close()
 
 states = ['5UTS','5UTS+','TIS','TIS+','TES','TTS-','TTS','3UTS-','3UTS']
@@ -27,7 +27,7 @@ for r,rl in enumerate(utils.READ_LENGTHS):
     subplot = figure.add_axes([0.1,0.1,0.8,0.8])
     for j,b in enumerate(bs):
         period = emissions[j].periodicity[r]
-        for k in xrange(3):
+        for k in range(3):
             height = period[:,k]
             bottom = period[:,:k+1].sum(1)-height
             subplot.bar(xvals+offsets[j], height, bottom=bottom, linewidth=0, width=0.25, color=colors[k])

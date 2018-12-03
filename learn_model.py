@@ -1,5 +1,5 @@
 import argparse
-import cPickle
+import pickle
 import warnings
 import pdb
 
@@ -80,7 +80,7 @@ def select_transcripts(options):
     
     # load all transcripts
     transcript_models_dict = load_data.load_gtf(options.gtf_file)
-    transcript_models = transcript_models_dict.values()
+    transcript_models = list(transcript_models_dict.values())
     T = len(transcript_models)
 
     # get translation level in all transcripts
@@ -130,7 +130,7 @@ def learn(options):
     # select transcripts for learning parameters
     transcripts = select_transcripts(options)
     T = len(transcripts)
-    print "%d transcripts selected"%T
+    print("%d transcripts selected"%T)
 
     # load sequence of transcripts and transform sequence data
     genome_track = load_data.Genome(options.fasta_file, options.mappability_file)
@@ -140,14 +140,14 @@ def learn(options):
         sequence = seq.RnaSequence(rna_sequence)
         codon_flags.append(sequence.mark_codons())
         total_bases += len(rna_sequence)
-    print "%d bases covered"%total_bases
+    print("%d bases covered"%total_bases)
 
     # load footprint count data in transcripts
     ribo_track = load_data.RiboSeq(options.riboseq_file)
     footprint_counts = ribo_track.get_counts(transcripts)
     ribo_track.close()
     for i,r in enumerate(utils.READ_LENGTHS):
-        print "%d ribosome footprints of length %d bp"%(np.sum([c[:,i].sum() for c in footprint_counts]),r)
+        print("%d ribosome footprints of length %d bp"%(np.sum([c[:,i].sum() for c in footprint_counts]),r))
 
     # load transcript-level rnaseq RPKM
     if options.rnaseq_file is None:
@@ -156,7 +156,7 @@ def learn(options):
         rnaseq_track = load_data.RnaSeq(options.rnaseq_file)
         rna_counts = rnaseq_track.get_total_counts(transcripts)
         rnaseq_track.close()
-    print "median RNA-seq RPKM in data is %.2e"%(np.sum(rna_counts))
+    print("median RNA-seq RPKM in data is %.2e"%(np.sum(rna_counts)))
 
     # load mappability of transcripts; transform mappability to missingness
     if options.mappability_file is not None:
@@ -165,7 +165,7 @@ def learn(options):
         rna_mappability = [np.ones(c.shape,dtype='bool') for c in footprint_counts]
     genome_track.close()
     for i,r in enumerate(utils.READ_LENGTHS):
-        print "%d bases have missing counts for %d bp footprints"%(np.sum([m.shape[0]-np.sum(m[:,i]) for m in rna_mappability]),r)
+        print("%d bases have missing counts for %d bp footprints"%(np.sum([m.shape[0]-np.sum(m[:,i]) for m in rna_mappability]),r))
 
     # run the learning algorithm
     transition, emission, L = ribohmm.learn_parameters(footprint_counts, codon_flags, \
@@ -174,8 +174,8 @@ def learn(options):
 
     # output model parameters
     handle = open(options.model_file,'w')
-    cPickle.Pickler(handle,protocol=2).dump(transition)
-    cPickle.Pickler(handle,protocol=2).dump(emission)
+    pickle.Pickler(handle,protocol=2).dump(transition)
+    pickle.Pickler(handle,protocol=2).dump(emission)
     handle.close()
 
 if __name__=="__main__":

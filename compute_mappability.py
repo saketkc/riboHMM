@@ -95,7 +95,7 @@ def compute_mappability(options):
             for start,end in zip(starts,ends):
                 map_handle.write('\t'.join([cname, '%d'%start, '%d'%end])+'\n')
 
-        print "completed %s"%cname
+        print("completed %s"%cname)
 
     sam_handle.close()
     map_handle.close()
@@ -110,7 +110,7 @@ def compute_mappability(options):
         stdout=subprocess.PIPE, shell=True)
     stdout = pipe.communicate()[0]
 
-    print "completed computing mappability from BAM file %s"%options.bam_file
+    print("completed computing mappability from BAM file %s"%options.bam_file)
 
 if __name__=="__main__":
 

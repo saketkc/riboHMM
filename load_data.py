@@ -2,6 +2,7 @@ import numpy as np
 import pysam
 import utils
 import pdb
+from functools import reduce
 
 MIN_MAP_QUAL = 10
 
@@ -312,7 +313,7 @@ def load_gtf(filename):
     handle.close()
 
     # generate transcript models
-    keys = transcripts.keys()
+    keys = list(transcripts.keys())
     for key in keys:
         try:
             transcripts[key].generate_transcript_model()

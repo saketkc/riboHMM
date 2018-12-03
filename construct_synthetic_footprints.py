@@ -50,12 +50,12 @@ if __name__=="__main__":
 
     options = parse_args()
 
-    qual = ''.join(['~' for r in xrange(options.footprint_length)])
+    qual = ''.join(['~' for r in range(options.footprint_length)])
     seq_handle = pysam.FastaFile(options.fasta_file)
 
     # load transcripts
     transcripts = load_data.load_gtf(options.gtf_file)
-    tnames = transcripts.keys()
+    tnames = list(transcripts.keys())
 
     fastq_handle = gzip.open(options.output_fastq_prefix, 'wb')
     for num,tname in enumerate(tnames):
@@ -74,7 +74,7 @@ if __name__=="__main__":
         L = len(seq)
         positions = transcript.start + np.where(transcript.mask)[0]
         reads = [seq[i:i+options.footprint_length] 
-                 for i in xrange(L-options.footprint_length+1)]
+                 for i in range(L-options.footprint_length+1)]
     
         # write synthetic reads
         fastq_handle.write(''.join(["@%s:%d:%s\n%s\n+\n%s\n"%(transcript.chromosome, \
@@ -88,7 +88,7 @@ if __name__=="__main__":
         seq = ''.join(utils.make_complement(seq))
         positions = transcript.start + transcript.mask.size - np.where(transcript.mask)[0]
         reads = [seq[i:i+options.footprint_length] 
-                 for i in xrange(L-options.footprint_length+1)]
+                 for i in range(L-options.footprint_length+1)]
 
         # write synthetic reads
         fastq_handle.write(''.join(["@%s:%d:%s\n%s\n+\n%s\n"%(transcript.chromosome, \
