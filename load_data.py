@@ -326,7 +326,12 @@ def load_gtf(filename):
             chrom = 'chr%s' % data[0]
         data[0] = chrom
 
-        transcript_id = attr['transcript_id']
+        try:
+            transcript_id = attr['transcript_id']
+        except KeyError:
+            # skc: No transcript_id found, possibly because of a
+            # a pseudogene
+            continue
         try:
 
             # if transcript is in dictionary, only parse exons
