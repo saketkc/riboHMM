@@ -114,11 +114,22 @@ class RiboSeq():
                 for r in utils.READ_LENGTHS
             ]
             if transcript.strand == '+':
-                tbx_iters = [handle.fetch(transcript.chromosome, transcript.start, transcript.stop) \
-                    for handle in self._fwd_handles]
+                tbx_iters = []
+                for handle in self._fwd_handles:
+                    try: 
+                        iters = handle.fetch(str(transcript.chromosome), int(transcript.start), int(transcript.stop))
+                    except:
+                        continue
+                    tbx_iters.append(iters)
             else:
-                tbx_iters = [handle.fetch(transcript.chromosome, transcript.start, transcript.stop) \
-                    for handle in self._rev_handles]
+                tbx_iters = []
+                for handle in self._rev_handles:
+                    try: 
+                        iters = handle.fetch(str(transcript.chromosome), int(transcript.start), int(transcript.stop))
+                    except:
+                        continue
+                    tbx_iters.append(iters)
+
 
             for tbx_iter, counts in zip(tbx_iters, rcounts):
 
@@ -154,11 +165,21 @@ class RiboSeq():
                 for r in utils.READ_LENGTHS
             ]
             if transcript.strand == '+':
-                tbx_iters = [handle.fetch(transcript.chromosome, transcript.start, transcript.stop) \
-                    for handle in self._fwd_handles]
+                tbx_iters = []
+                for handle in self._fwd_handles:
+                    try: 
+                        iters = handle.fetch(str(transcript.chromosome), int(transcript.start), int(transcript.stop))
+                    except:
+                        continue
+                    tbx_iters.append(iters)
             else:
-                tbx_iters = [handle.fetch(transcript.chromosome, transcript.start, transcript.stop) \
-                    for handle in self._rev_handles]
+                tbx_iters = []
+                for handle in self._rev_handles:
+                    try: 
+                        iters = handle.fetch(str(transcript.chromosome), int(transcript.start), int(transcript.stop))
+                    except:
+                        continue
+                    tbx_iters.append(iters)
 
             for tbx_iter, counts in zip(tbx_iters, rcounts):
 
