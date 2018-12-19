@@ -1,6 +1,7 @@
 import time
 import re
 import pdb
+import os 
 
 import numpy as np
 cimport numpy as np
@@ -14,7 +15,8 @@ STARTS = dict([(s,i+1) for i,s in enumerate(utils.STARTCODONS)])
 STOPS = dict([(s,i+1) for i,s in enumerate(utils.STOPCODONS)])
 
 # load pre-computed Kozak model
-kozak_model = np.load("data/kozak_model.npz")
+cur_dir_path = os.path.dirname(os.path.realpath(__file__))
+kozak_model = np.load(os.path.join(cur_dir_path, "data", "kozak_model.npz"))
 FREQ = dict([(c,np.log2(row)) for c,row in zip(['A','U','G','C'], kozak_model['freq'])])
 ALTFREQ = dict([(c,np.log2(row)) for c,row in zip(['A','U','G','C'], kozak_model['altfreq'])])
 for c in ['A','U','G','C']:

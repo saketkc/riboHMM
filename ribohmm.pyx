@@ -66,13 +66,13 @@ cdef class Data:
 
         """
 
-        cdef double r,m,f
+        cdef int r,m,f
         cdef np.ndarray ma, mapp
 
         # length of transcript
         self.L = obs.shape[0]
         # length of HMM
-        self.M = self.L/3-1
+        self.M = int(self.L/3)-1
         # number of distinct footprint lengths
         self.R = obs.shape[1]
         # observed ribosome-profiling data
@@ -112,7 +112,7 @@ cdef class Data:
 
         """
 
-        cdef long r, f, m, l
+        cdef int r, f, m, l
         cdef np.ndarray total, mask, misstypes, dat, mapA, mapB, mapAB
         cdef np.ndarray[np.float64_t, ndim=1] alpha, beta
         cdef np.ndarray[np.float64_t, ndim=2] rescale, log_probability, rate_log_probability
